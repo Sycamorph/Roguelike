@@ -1,0 +1,20 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://src/UI/HealthBarOver.png" type="Texture2D" id=1]
+[ext_resource path="res://src/UI/HealthBarUnder.png" type="Texture2D" id=2]
+[ext_resource path="res://src/UI/HealthBar.gd" type="Script" id=3]
+[ext_resource path="res://src/UI/HealthBarFill.png" type="Texture2D" id=4]
+
+[node name="HealthBar" type="Node2D"]
+
+[node name="HealthBar" type="TextureProgressBar" parent="."]
+offset_left = -32.0
+offset_top = 8.0
+offset_right = 32.0
+offset_bottom = 24.0
+texture_under = ExtResource( 2 )
+texture_over = ExtResource( 1 )
+texture_progress = ExtResource( 4 )
+script = ExtResource( 3 )
+
+[node name="Tween" type="Tween" parent="HealthBar"]

@@ -1,0 +1,37 @@
+[gd_scene load_steps=6 format=3 uid="uid://d2d0nb2c2u2l8"]
+
+[ext_resource type="Script" path="res://src/Actors/Player.gd" id="1"]
+[ext_resource type="Texture2D" uid="uid://dhath20y7gr3r" path="res://Sprites/Characters/Player0.png" id="2"]
+[ext_resource type="PackedScene" uid="uid://drhq6rmxphkc1" path="res://src/Actors/Actions/ActionHandler.tscn" id="3"]
+[ext_resource type="Script" path="res://src/Actors/Stats.gd" id="4"]
+
+[sub_resource type="CircleShape2D" id="1"]
+radius = 15.0
+
+[node name="Player" type="CharacterBody2D"]
+texture_filter = 1
+collision_mask = 8
+script = ExtResource("1")
+playable = true
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(16, 16)
+texture = ExtResource("2")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Sprite2D"]
+
+[node name="Stats" type="Node2D" parent="."]
+script = ExtResource("4")
+max_health = 15
+max_mana = 15
+speed = 10
+
+[node name="Camera2D" type="Camera2D" parent="."]
+
+[node name="HitboxShape" type="CollisionShape2D" parent="."]
+position = Vector2(16, 16)
+shape = SubResource("1")
+disabled = true
+
+[node name="Actions" parent="." instance=ExtResource("3")]
+position = Vector2(16, 16)

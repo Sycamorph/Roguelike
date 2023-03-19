@@ -1,0 +1,13 @@
+[gd_scene load_steps=4 format=3 uid="uid://dkmc13xhhd3hw"]
+
+[ext_resource type="Script" path="res://src/UI/ExperienceBar.gd" id="1"]
+[ext_resource type="Texture2D" uid="uid://bh8jnaos175ul" path="res://src/UI/bar_background.png" id="2"]
+[ext_resource type="Texture2D" uid="uid://6ak7rlmwq3sh" path="res://src/UI/bar_fill.png" id="3"]
+
+[node name="ExperienceBar" type="TextureProgressBar"]
+offset_right = 290.0
+offset_bottom = 64.0
+value = 50.0
+texture_under = ExtResource("2")
+texture_progress = ExtResource("3")
+script = ExtResource("1")

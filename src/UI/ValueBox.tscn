@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://bvpuij2whax7h"]
+
+[ext_resource type="Script" path="res://src/UI/ValueBox.gd" id="1_1i7xq"]
+
+[node name="ValueBox" type="SpinBox"]
+script = ExtResource("1_1i7xq")

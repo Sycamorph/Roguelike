@@ -1,0 +1,55 @@
+[gd_scene load_steps=8 format=3 uid="uid://dgdfghdjoixhf"]
+
+[ext_resource type="Script" path="res://src/Actors/Projectiles/AoE.gd" id="1_5y0xg"]
+[ext_resource type="Texture2D" uid="uid://dckx5d5oldonu" path="res://Sprites/Objects/Light.png" id="1_k3l4l"]
+[ext_resource type="Script" path="res://src/Actors/Stats.gd" id="2_qx70e"]
+[ext_resource type="PackedScene" path="res://src/Actors/Actions/Action.tscn" id="3_8o2lb"]
+[ext_resource type="Script" path="res://src/Actors/Actions/Actions.gd" id="5_7gmjr"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_bht7n"]
+radius = 8.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_cufms"]
+radius = 1.0
+
+[node name="AoE" type="Area2D"]
+texture_filter = 1
+collision_layer = 0
+collision_mask = 143
+script = ExtResource("1_5y0xg")
+
+[node name="HitboxShape" type="CollisionShape2D" parent="."]
+position = Vector2(16, 16)
+scale = Vector2(2, 2)
+shape = SubResource("CircleShape2D_bht7n")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(16, 16)
+scale = Vector2(2, 2)
+texture = ExtResource("1_k3l4l")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Sprite2D"]
+
+[node name="Stats" type="Node2D" parent="."]
+script = ExtResource("2_qx70e")
+max_health = 10
+max_mana = 10
+
+[node name="Actions" parent="." instance=ExtResource("3_8o2lb")]
+script = ExtResource("5_7gmjr")
+
+[node name="Timer" type="Timer" parent="."]
+
+[node name="WallTester" type="CharacterBody2D" parent="."]
+visible = false
+position = Vector2(16, 16)
+collision_layer = 0
+collision_mask = 8
+
+[node name="Sprite2D" type="Sprite2D" parent="WallTester"]
+modulate = Color(0, 0, 0, 1)
+scale = Vector2(0.143105, 0.143105)
+texture = ExtResource("1_k3l4l")
+
+[node name="WallTesterShape" type="CollisionShape2D" parent="WallTester"]
+shape = SubResource("CircleShape2D_cufms")

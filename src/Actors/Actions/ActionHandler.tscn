@@ -1,0 +1,10 @@
+[gd_scene load_steps=2 format=3 uid="uid://drhq6rmxphkc1"]
+
+[ext_resource type="Script" path="res://src/Actors/Actions/Actions.gd" id="1_5ov55"]
+
+[node name="Actions" type="Node2D"]
+script = ExtResource("1_5ov55")
+
+[node name="Timer" type="Timer" parent="."]
+
+[node name="BlockContainer" type="Node2D" parent="."]
