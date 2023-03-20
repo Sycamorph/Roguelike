@@ -87,7 +87,10 @@ func initialize_action_builder(block, button):
 		current_block = block
 		current_fragment = []
 		for i in range(block.order.size()):
-			current_fragment.append(0)
+			if block.order[i] in ActionBlock.VALUE_TYPES:
+				current_fragment.append(block.defaults[block.order[i]])
+			else:
+				current_fragment.append(0)
 		current_fragment[0] = current_block
 		player.actions.remove_block(current_block)
 	base_screen.visible = false
@@ -169,12 +172,18 @@ func build_action_lines(clear=true):
 		elif element in current_block.editable_values:
 			var new_spinbox = preload("res://src/UI/ValueBox.tscn").instantiate()
 			builder_lines.add_child(new_spinbox)
-			new_spinbox.min_value = -player.level
-			new_spinbox.max_value = player.level
 			new_spinbox.block_id = i
-			if current_fragment[i] == 0:
-				new_spinbox.value = current_block.defaults[element]
-				current_fragment[i] = current_block.defaults[element]
+			if element in ActionBlock.PERCENTAGE_VALUES:
+				new_spinbox.min_value = max(0, 100 -player.level)
+				new_spinbox.max_value = 100 + player.level
+			elif element in ActionBlock.POSITIVE_VALUES:
+				new_spinbox.min_value = 0
+				new_spinbox.max_value = player.level * 2
+			else:
+				new_spinbox.min_value = -player.level
+				new_spinbox.max_value = player.level
+			if element in ActionBlock.PERCENTAGE_VALUES:
+				new_spinbox.value = current_fragment[i] * 100
 			else:
 				new_spinbox.value = current_fragment[i]
 			new_spinbox.connect("change_value_block", Callable(self, "change_value_block"))
@@ -208,7 +217,10 @@ func change_ability_name(new_name):
 func change_value_block(block_id, new_value):
 	if current_fragment.size() < block_id:
 		return	# Prevent the crash when quitting
-	current_fragment[block_id] = new_value
+	if current_block.order[block_id] in ActionBlock.PERCENTAGE_VALUES:
+		current_fragment[block_id] = new_value / 100
+	else:
+		current_fragment[block_id] = new_value
 
 func builder_block_pressed(block_id, block, button):
 	if button.is_in_builder_lines:
@@ -281,6 +293,7 @@ func create_new_ability():
 				i.used_in = current_ability
 	current_ability = null
 	current_fragment = []
+	player.actions.sort_abilities(player)
 	
 func clear_action_lines():
 	for i in builder_lines.get_children():

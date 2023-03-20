@@ -241,16 +241,13 @@ func act(actor, target = null, spell_range=64, extra_exceptions=[]):
 				timer.start(block[-1])
 				await timer.timeout
 		elif block[0] == SHOOT_BASIC or block[0] == AOE:
-			# Maybe add the option for homing and lasers
 			action_succeeded = shoot_act(actor, target, block, extra_exceptions)
 			if block[-1] != 0:	# Delay is in the end
 				timer.start(block[-1])
 				await timer.timeout
 		elif block[0] == REPEAT:
-			print("repeating")
-			if block[-1] >= 0:
-				for i in range(block[-1]+1):	# TODO: Think of something interesting for negative repeats
-					print(block[1])
+			if block[-1] >= 0:	
+				for i in range(block[-1]):
 					action_succeeded = await block[1].act(actor, target, spell_range, extra_exceptions)
 		elif block[0] == CHAIN:
 			block.remove_at(0)

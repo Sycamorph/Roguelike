@@ -26,6 +26,7 @@ func add_ability(target, blocks, ability_name="New Ability", cooldown=0, mana_co
 	if active:
 		target.selected_action = new_ability
 	new_ability.connect("create_projectile",Callable(target,"shoot"))
+	sort_abilities(target)
 	return new_ability
 
 func add_random_block():
@@ -52,6 +53,7 @@ func add_block(block):	# Adds 1 block
 			i.amount += 1
 			return
 	blocks.add_child(block)
+	sort_blocks(self)
 	
 func remove_block(block):
 	block.amount -= 1
@@ -79,3 +81,20 @@ func remove_ability(target, ability):
 func update_all(target : Battler):
 	for i in target.available_actions:
 		i.update()
+
+func sort_abilities(target):
+	target.available_actions.sort_custom(Callable(self, 'sort_abilities_names'))
+	for i in target.available_actions:
+		target.actions.move_child(i, 0)
+	
+static func sort_abilities_names(a: Action, b: Action) -> bool:
+	return a.ability_name.naturalnocasecmp_to(b.ability_name) > 0
+
+func sort_blocks(target):
+	var sorting_blocks = target.blocks.get_children()
+	sorting_blocks.sort_custom(Callable(self, 'sort_blocks_names'))
+	for i in sorting_blocks:
+		target.blocks.move_child(i, 0)
+	
+static func sort_blocks_names(a: ActionBlock, b: ActionBlock) -> bool:
+	return a.contents.naturalnocasecmp_to(b.contents) > 0

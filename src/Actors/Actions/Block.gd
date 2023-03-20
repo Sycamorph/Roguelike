@@ -2,8 +2,10 @@ extends Node2D
 
 class_name ActionBlock
 
-const VALUE_TYPES = ["VALUE", "DELAY", "SIZE", "SPEED", "ACCELERATION", "FALLOFF", "REPEAT", "CHAIN"]
-const HIDDEN_VALUES = ["SIZE", "SPEED", "ACCELERATION", "FALLOFF", "CHAIN"]	# No need to think about them, unless special
+const VALUE_TYPES = ["VALUE", "DELAY", "SIZE", "SPEED", "ACCELERATION", "FALLOFF", "REPEAT"]
+const HIDDEN_VALUES = ["SIZE", "SPEED", "ACCELERATION", "FALLOFF"]	# No need to think about them, unless special
+const POSITIVE_VALUES = ["REPEAT"]
+const PERCENTAGE_VALUES = ["SIZE", "SPEED"]
 const OPTIONAL = ["ABILITY"]
 var editable_values = ["VALUE", "REPEAT"]
 
@@ -56,6 +58,9 @@ func initialize_properties(_contents):
 	elif contents == "AOE":
 		# AOE of value1 size with ability effect, value2 delay
 		order = ["BLOCK", "SIZE", "ABILITY", "DELAY"]
+		descriptions["BLOCK"] = "Cause everyone in range to cast a spell"
+		descriptions["SIZE"] = "Range: "
+		descriptions["ABILITY"] = ["The targets will cast: "]
 		type = "BLOCK"
 		mana_worth = 5
 		possible_effects = [["CHEAP", "EXPENSIVE"], ["BIG", "SMALL"], [null, "ENVIRONMENT EFFECT"]]
