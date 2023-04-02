@@ -16,7 +16,6 @@ script = ExtResource("1_fs04v")
 battler_name = "Void"
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
-position = Vector2(16, 16)
 texture = ExtResource("2_deq8i")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="Sprite2D"]
@@ -30,5 +29,4 @@ speed = 10
 [node name="Actions" parent="." instance=ExtResource("4_m3d1g")]
 
 [node name="HitboxShape" type="CollisionShape2D" parent="."]
-position = Vector2(16, 16)
 shape = SubResource("RectangleShape2D_x8jdy")

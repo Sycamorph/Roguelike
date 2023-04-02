@@ -1,3 +1,5 @@
+CollisionShape2D
+Area2D
 Label
 TextureButton
 SpinBox
@@ -7,9 +9,7 @@ Control
 Container
 Node2D
 Sprite2D
-CollisionShape2D
 CharacterBody2D
-Area2D
 MarginContainer
 HBoxContainer
 ScrollContainer

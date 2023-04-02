@@ -53,6 +53,9 @@ func _physics_process(delta: float) -> void:
 	if Input.is_action_pressed("use_ability"):
 		target = get_global_mouse_position() - Vector2(World.GRID_SIZE, World.GRID_SIZE) / 2
 		use_ability(target)
+	spam_prevention = max(0, spam_prevention - 1)	# Action spam prevention
+	
+func _input(event):
 	if Input.is_action_just_released("scroll_down"):
 		selected_action_id = selected_action_id - 1 if selected_action_id > 0 else available_actions.size() - 1
 		selected_action = available_actions[selected_action_id]
@@ -62,8 +65,6 @@ func _physics_process(delta: float) -> void:
 		selected_action = available_actions[selected_action_id]
 		emit_signal("switch_action", self)
 		
-	spam_prevention = max(0, spam_prevention - 1)
-	
 # Action
 func use_ability(target):
 	if spam_prevention == 0:

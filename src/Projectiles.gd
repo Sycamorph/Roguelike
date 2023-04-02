@@ -27,6 +27,7 @@ func create_projectile(source, target, main, type, extra_exceptions=[]):
 		new_projectile.direction = new_projectile.global_position.direction_to(target)
 		new_projectile.hit_action.connect("action_complete",Callable(new_projectile,"destroy"))
 		new_projectile.flying_action = new_projectile.actions.add_ability(new_projectile, main[5], "ability_name", main[6])	# Cooldown will make sure it's not constant
+		new_projectile.flying_action.force_cooldown()
 		new_projectile.connect("create_projectile",Callable(self,"create_projectile"))
 		new_projectile.initialize()
 	elif type == "AOE":

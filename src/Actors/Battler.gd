@@ -40,10 +40,7 @@ func update_location():
 	grid_position.x = int(round(position.x / World.GRID_SIZE))
 	grid_position.y = int(round(position.y / World.GRID_SIZE))
 
-func calculate_move_velocity(
-	linear_velocity: Vector2,
-	direction: Vector2,
-	speed: float) -> Vector2:
+func calculate_move_velocity(linear_velocity: Vector2, direction: Vector2, speed: float) -> Vector2:
 	var new_velocity: = linear_velocity
 	new_velocity.x = speed * direction.x * World.GRID_SIZE
 	new_velocity.y = speed * direction.y * World.GRID_SIZE

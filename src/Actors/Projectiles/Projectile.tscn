@@ -1,10 +1,9 @@
-[gd_scene load_steps=7 format=3 uid="uid://drlvnpp03ssfw"]
+[gd_scene load_steps=6 format=3 uid="uid://drlvnpp03ssfw"]
 
 [ext_resource type="Script" path="res://src/Actors/Projectiles/Projectile.gd" id="2"]
 [ext_resource type="Texture2D" uid="uid://dckx5d5oldonu" path="res://Sprites/Objects/Light.png" id="2_r8eu4"]
 [ext_resource type="Script" path="res://src/Actors/Stats.gd" id="3"]
-[ext_resource type="PackedScene" path="res://src/Actors/Actions/Action.tscn" id="4"]
-[ext_resource type="Script" path="res://src/Actors/Actions/Actions.gd" id="5_jsype"]
+[ext_resource type="PackedScene" uid="uid://drhq6rmxphkc1" path="res://src/Actors/Actions/ActionHandler.tscn" id="4_rf201"]
 
 [sub_resource type="CircleShape2D" id="1"]
 radius = 8.0
@@ -16,11 +15,9 @@ collision_mask = 15
 script = ExtResource("2")
 
 [node name="HitboxShape" type="CollisionShape2D" parent="."]
-position = Vector2(16, 16)
 shape = SubResource("1")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
-position = Vector2(16, 16)
 texture = ExtResource("2_r8eu4")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="Sprite2D"]
@@ -30,7 +27,6 @@ script = ExtResource("3")
 max_health = 10
 max_mana = 10
 
-[node name="Actions" parent="." instance=ExtResource("4")]
-script = ExtResource("5_jsype")
-
 [node name="Timer" type="Timer" parent="."]
+
+[node name="Actions" parent="." instance=ExtResource("4_rf201")]

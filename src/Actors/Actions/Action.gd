@@ -262,6 +262,13 @@ func act(actor, target = null, spell_range=64, extra_exceptions=[]):
 		await timer.timeout
 	on_cooldown = false
 
+func force_cooldown(duration=cooldown):
+	if duration != 0:
+		on_cooldown = true
+		timer.start(duration)
+		await timer.timeout
+		on_cooldown = false
+
 func self_act(actor, block):
 	if block[1] == ADD_STAT:
 		return act_add_stat(actor, block[2], block[3])

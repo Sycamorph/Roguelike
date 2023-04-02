@@ -42,7 +42,7 @@ func AoE_attack():
 		# Test if protected by a wall, testing all corners of the target
 		var protected = 0
 		var target_box = target.hitbox.get_shape().get_rect()
-		var A = target_box.position + target.global_position + target.hitbox.position
+		var A = target.global_position
 		var B = wall_tester.global_position
 		var distance = A - B
 		var collision = wall_tester.move_and_collide(distance, true)

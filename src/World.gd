@@ -35,7 +35,7 @@ var room_rects = []
 var connected_rooms = []
 var world_rect 
 var world_margin = 5	# Tiles of walls on the edge of the world
-var num_rooms = 2
+var num_rooms = 5
 var min_room_size = Vector2(9, 9)	# Smallest generic room scene possible
 const GRID_SIZE = 32
 enum {FLOOR, WALL, DOOR_C}
@@ -79,7 +79,7 @@ func spawn_player():
 	
 func convert_room_to_rect(room):
 	var global_rect_position = room.to_global(room.map_to_local(room.get_used_rect().position))
-	global_rect_position -= Vector2(1, 1) * GRID_SIZE / 2
+	#global_rect_position -= Vector2(1, 1) * GRID_SIZE
 	var global_rect_size = room.get_used_rect().size * GRID_SIZE
 	return Rect2(global_rect_position, global_rect_size)
 	
@@ -149,6 +149,9 @@ func create_door(room1, room2):
 	var rect2 = convert_room_to_rect(room2)
 	var shared_wall = rect1.intersection(rect2)
 	var available_tiles = []
+#	print(rect1)
+#	print(rect2)
+#	print(shared_wall)
 	if shared_wall.size.x < 3 * GRID_SIZE and shared_wall.size.y < 3 * GRID_SIZE:
 		return false	# Failed to create a door
 	if shared_wall.size.x > GRID_SIZE:	# The wall is either on the x or y axis
@@ -198,7 +201,7 @@ func attach_position(new_room, base_room):
 	for x in range(base_rect.position.x + 2 - floor_rect.size.x / GRID_SIZE, base_rect.end.x - 1):	#Don't place rooms in corners
 		var y = base_rect.position.y - floor_rect.size.y / GRID_SIZE 
 		floor_rect.position = Vector2i(base_room.to_global(base_room.map_to_local(Vector2i(x,y))))
-		floor_rect.position -= Vector2i(1, 1) * GRID_SIZE / 2
+		#floor_rect.position -= Vector2i(1, 1) * GRID_SIZE
 		var intersects = false
 		for room in room_rects:
 			if floor_rect.intersects(room):
@@ -208,7 +211,7 @@ func attach_position(new_room, base_room):
 			available_positions.append(floor_rect.position)
 		y = base_rect.end.y
 		floor_rect.position = Vector2i(base_room.to_global(base_room.map_to_local(Vector2i(x,y))))
-		floor_rect.position -= Vector2i(1, 1) * GRID_SIZE / 2
+		#floor_rect.position -= Vector2i(1, 1) * GRID_SIZE
 		intersects = false
 		for room in room_rects:
 			if floor_rect.intersects(room):
@@ -220,7 +223,7 @@ func attach_position(new_room, base_room):
 	for y in range(base_rect.position.y + 2 - floor_rect.size.y / GRID_SIZE, base_rect.end.y - 1):	#Don't place rooms in corners
 		var x = base_rect.position.x - floor_rect.size.x / GRID_SIZE
 		floor_rect.position = Vector2i(base_room.to_global(base_room.map_to_local(Vector2i(x,y))))
-		floor_rect.position -= Vector2i(1, 1) * GRID_SIZE / 2
+		#floor_rect.position -= Vector2i(1, 1) * GRID_SIZE
 		var intersects = false
 		for room in room_rects:
 			if floor_rect.intersects(room):
@@ -230,7 +233,7 @@ func attach_position(new_room, base_room):
 			available_positions.append(floor_rect.position)
 		x = base_rect.end.x
 		floor_rect.position = Vector2i(base_room.to_global(base_room.map_to_local(Vector2i(x,y))))
-		floor_rect.position -= Vector2i(1, 1) * GRID_SIZE / 2
+		#floor_rect.position -= Vector2i(1, 1) * GRID_SIZE
 		intersects = false
 		for room in room_rects:
 			if floor_rect.intersects(room):
