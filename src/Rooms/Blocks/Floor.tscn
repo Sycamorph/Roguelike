@@ -1,4 +1,4 @@
-[gd_scene load_steps=6 format=3 uid="uid://bdx6duncgrf7m"]
+[gd_scene load_steps=7 format=3 uid="uid://bdx6duncgrf7m"]
 
 [ext_resource type="Script" path="res://src/Rooms/Blocks/Block.gd" id="1_q4ll7"]
 [ext_resource type="Texture2D" uid="uid://ba4wbtgmao7tn" path="res://Sprites/World/Ground0.png" id="2_yoloe"]
@@ -7,6 +7,11 @@
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_x8jdy"]
 size = Vector2(32, 32)
+
+[sub_resource type="NavigationPolygon" id="NavigationPolygon_widw8"]
+vertices = PackedVector2Array(16, -16, 16, 16, -16, 16, -16, -16)
+polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3)])
+outlines = Array[PackedVector2Array]([PackedVector2Array(16, -16, 16, 16, -16, 16, -16, -16)])
 
 [node name="Floor" type="CharacterBody2D"]
 modulate = Color(1, 1, 1, 0.478431)
@@ -32,3 +37,6 @@ speed = 10
 
 [node name="HitboxShape" type="CollisionShape2D" parent="."]
 shape = SubResource("RectangleShape2D_x8jdy")
+
+[node name="NavigationRegion2D" type="NavigationRegion2D" parent="."]
+navigation_polygon = SubResource("NavigationPolygon_widw8")

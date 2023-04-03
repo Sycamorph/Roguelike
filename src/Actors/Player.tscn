@@ -26,6 +26,7 @@ max_mana = 15
 speed = 10
 
 [node name="Camera2D" type="Camera2D" parent="."]
+zoom = Vector2(1.5, 1.5)
 
 [node name="HitboxShape" type="CollisionShape2D" parent="."]
 shape = SubResource("1")

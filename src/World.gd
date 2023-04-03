@@ -65,6 +65,7 @@ func spawn_enemy(pool, enemy=-1, room=-1):
 	var y = (randi() % int(enemy_spawn.size.y / GRID_SIZE)) * GRID_SIZE + enemy_spawn.position.y
 	enemies.add_child(new_enemy)
 	new_enemy.position = Vector2(x, y)
+	new_enemy.home = Vector2(x, y)
 	new_enemy.initialize()
 	new_enemy.connect("create_projectile",Callable(projectiles,"create_projectile"))
 
@@ -274,7 +275,7 @@ func rebuild_map():
 		var w_y = cell.y * GRID_SIZE
 		var tile = floor_grid.get_cell_source_id(0, cell)
 		add_tile(w_x, w_y, tile)
-		if tile != FLOOR:	# Adding a floor under every tile
+		if tile != FLOOR and tile != WALL:	# Adding a floor under every tile
 			add_tile(w_x, w_y, FLOOR)
 	
 func add_tile(x, y, tile):	
@@ -295,7 +296,26 @@ func add_tile(x, y, tile):
 			floors.remove_at(id)
 			floor_positions.insert(id, new_pos)
 			floors.insert(id, new_block)
-	else:
+	elif tile == WALL:	# Walls replace floors and tiles
+		if new_pos in floor_positions:
+			var id = floor_positions.find(new_pos)
+			var old_block = floors[id]
+			print(old_block)
+			old_block.destroy()
+			floor_positions.remove_at(id)
+			floors.remove_at(id)
+		if new_pos not in tile_positions:
+			tile_positions.append(new_pos)
+			tiles.append(new_block)
+		else:
+			var id = tile_positions.find(new_pos)
+			var old_block = tiles[id]
+			old_block.destroy()
+			tile_positions.remove_at(id)
+			tiles.remove_at(id)
+			tile_positions.insert(id, new_pos)
+			tiles.insert(id, new_block)
+	else:	#Everything else replaces everything else and walls
 		if new_pos not in tile_positions:
 			tile_positions.append(new_pos)
 			tiles.append(new_block)

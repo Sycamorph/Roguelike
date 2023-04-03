@@ -1,10 +1,11 @@
-[gd_scene load_steps=8 format=3 uid="uid://xmr073aj8bu6"]
+[gd_scene load_steps=9 format=3 uid="uid://xmr073aj8bu6"]
 
-[ext_resource type="Script" path="res://src/Actors/Enemy.gd" id="1"]
+[ext_resource type="Script" path="res://src/Actors/Enemy.gd" id="1_ipamc"]
 [ext_resource type="Texture2D" uid="uid://cer6brcwyl15q" path="res://Sprites/Characters/Enemy0.png" id="2"]
 [ext_resource type="Script" path="res://src/Actors/Stats.gd" id="4"]
 [ext_resource type="PackedScene" uid="uid://bsojqev8qu0af" path="res://src/Actors/WallTester.tscn" id="5_7koa0"]
 [ext_resource type="PackedScene" uid="uid://drhq6rmxphkc1" path="res://src/Actors/Actions/ActionHandler.tscn" id="5_ij04w"]
+[ext_resource type="Texture2D" uid="uid://bh05p51y4x2c4" path="res://Sprites/UI/Arrow.png" id="6_ubfk4"]
 
 [sub_resource type="CircleShape2D" id="1"]
 radius = 15.0
@@ -16,8 +17,8 @@ radius = 16.0
 texture_filter = 1
 disable_mode = 1
 collision_layer = 2
-collision_mask = 8
-script = ExtResource("1")
+collision_mask = 11
+script = ExtResource("1_ipamc")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 texture = ExtResource("2")
@@ -28,9 +29,10 @@ texture = ExtResource("2")
 script = ExtResource("4")
 max_health = 10
 max_mana = 10
-speed = 10
+speed = 1.0
 
 [node name="HitboxShape" type="CollisionShape2D" parent="."]
+scale = Vector2(0.2, 0.2)
 shape = SubResource("1")
 
 [node name="Vision" type="Area2D" parent="."]
@@ -43,6 +45,16 @@ shape = SubResource("CircleShape2D_f50qw")
 [node name="WallTester" parent="." instance=ExtResource("5_7koa0")]
 
 [node name="Actions" parent="." instance=ExtResource("5_ij04w")]
+
+[node name="Arrow" type="Sprite2D" parent="."]
+rotation = 3.14159
+texture = ExtResource("6_ubfk4")
+
+[node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]
+path_desired_distance = 8.0
+target_desired_distance = 32.0
+radius = 16.0
+debug_enabled = true
 
 [connection signal="body_entered" from="Vision" to="." method="_on_vision_body_entered"]
 [connection signal="body_exited" from="Vision" to="." method="_on_vision_body_exited"]
