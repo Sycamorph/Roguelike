@@ -35,7 +35,7 @@ var room_rects = []
 var connected_rooms = []
 var world_rect 
 var world_margin = 5	# Tiles of walls on the edge of the world
-var num_rooms = 5
+var num_rooms = 15
 var min_room_size = Vector2(9, 9)	# Smallest generic room scene possible
 const GRID_SIZE = 32
 enum {FLOOR, WALL, DOOR_C}

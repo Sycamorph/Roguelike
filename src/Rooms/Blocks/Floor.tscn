@@ -8,10 +8,10 @@
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_x8jdy"]
 size = Vector2(32, 32)
 
-[sub_resource type="NavigationPolygon" id="NavigationPolygon_widw8"]
-vertices = PackedVector2Array(16, -16, 16, 16, -16, 16, -16, -16)
-polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3)])
-outlines = Array[PackedVector2Array]([PackedVector2Array(16, -16, 16, 16, -16, 16, -16, -16)])
+[sub_resource type="NavigationPolygon" id="NavigationPolygon_pkfd7"]
+vertices = PackedVector2Array(8, -8, 16, -4, 16, 4, 8, 8, -8, 8, -16, 4, -16, -4, -8, -8, 4, 16, -4, 16, -4, -16, 4, -16)
+polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3, 4, 5, 6, 7), PackedInt32Array(3, 8, 9, 4), PackedInt32Array(0, 7, 10, 11)])
+outlines = Array[PackedVector2Array]([PackedVector2Array(16, 4, 8, 8, 4, 16, -4, 16, -8, 8, -16, 4, -16, -4, -8, -8, -4, -16, 4, -16, 8, -8, 16, -4)])
 
 [node name="Floor" type="CharacterBody2D"]
 modulate = Color(1, 1, 1, 0.478431)
@@ -39,4 +39,4 @@ speed = 10
 shape = SubResource("RectangleShape2D_x8jdy")
 
 [node name="NavigationRegion2D" type="NavigationRegion2D" parent="."]
-navigation_polygon = SubResource("NavigationPolygon_widw8")
+navigation_polygon = SubResource("NavigationPolygon_pkfd7")

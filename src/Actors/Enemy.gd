@@ -7,7 +7,7 @@ signal died(battler)
 @export var keep_distance = 1
 @export var faction = "None"
 # Character traits, their effect is exponential
-@export var aggressiveness = 10
+@export var aggressiveness = 1
 @export var cowardice = 1
 
 @onready var wall_tester = $WallTester
@@ -16,14 +16,16 @@ var squad = []	# TODO: Squad mechanics, probably a separate scene for different 
 var in_vision = []	# Enemies in vision_range
 var in_range = []	# Enemies in range, maybe not visible yet
 var attacking = null
-var walk_timer = 0
-var agro_timer = 0
+var walk_timer = 0.0
+var agro_timer = 0.0
 
+var going_home = false
 var home : Vector2
 
 func _ready():
 	type = "Enemy"
 	$Vision/VisionShape.scale = Vector2(vision_range*2+1, vision_range*2+1)
+	$NavigationAgent2D.max_speed = stats.speed * World.GRID_SIZE
 
 func update_stats():
 	emit_signal("health_changed", stats.health, stats.max_health)
@@ -41,7 +43,14 @@ func _physics_process(delta):
 			in_vision.append(i)
 			
 	check_for_targets()
-	if not attacking:
+	if going_home:
+		var next_path_position = $NavigationAgent2D.get_next_path_position()
+		var new_velocity = global_position.direction_to(next_path_position) * stats.speed * World.GRID_SIZE
+		set_velocity(new_velocity)
+		move_and_slide()
+		if $NavigationAgent2D.is_navigation_finished():
+			going_home = false
+	elif not attacking:
 		if walk_timer <= 0:
 			if randi() % 100 == 0:
 				walk_timer = randfn(1, 1)	# A chance to walk in a random direction
@@ -50,7 +59,7 @@ func _physics_process(delta):
 		else:	# Random walk cycle
 			walk_timer -= delta
 			var new_velocity : Vector2 = transform.x * stats.speed	# Set the velocity using the chosen direction
-			new_velocity = new_velocity.normalized() * stats.speed / 5	# Set the velocity to speed
+			new_velocity = new_velocity.normalized() * stats.speed / 5 * World.GRID_SIZE * delta	# Set the velocity to speed/5
 			set_velocity(new_velocity)
 			var collided_with = move_and_collide(new_velocity)
 			if collided_with:	# Turn around if you walked into something
@@ -58,38 +67,44 @@ func _physics_process(delta):
 				look_at(global_position + collider.global_position * -1)
 
 	else:
-		agro_timer -= delta
 		look_at(attacking.global_position)
-		engage_enemy()
+		engage_enemy(delta)
 	update_location()
 	
-func engage_enemy():
-	var new_velocity = transform.x * stats.speed
+func engage_enemy(delta):
+	var new_velocity = transform.x
 	var distance = get_distance(attacking)
-	if distance < keep_distance * World.GRID_SIZE:
+	var can_aim = test_aim()
+	if distance < keep_distance * World.GRID_SIZE and can_aim:
 		# Back off slowly
-		new_velocity = new_velocity.normalized() * stats.speed / 10 * -1
+		new_velocity = new_velocity.normalized() * stats.speed * -1 * World.GRID_SIZE / 10
 		set_velocity(new_velocity)
-		var collided_with = move_and_collide(new_velocity)
-	elif distance > (keep_distance + 0) * World.GRID_SIZE or not test_aim():	# The target is too far or not visible
+		move_and_slide()
+	elif distance > (keep_distance + 1) * World.GRID_SIZE or not can_aim:	# The target is too far or not visible
+		agro_timer -= delta
+		if distance > (keep_distance + 1) * aggressiveness * World.GRID_SIZE:	# Absolute limit
+			agro_timer = 0
 		# Approach quickly
 		$NavigationAgent2D.set_target_position(attacking.global_position)
 		if not $NavigationAgent2D.is_target_reachable():
 			print("not reachable")
+			go_home()
 			return
 		var next_path_position = $NavigationAgent2D.get_next_path_position()
-		print(global_position)
-		print(next_path_position)
-		print(attacking.global_position)
-		print($NavigationAgent2D.get_final_position())
-		new_velocity = global_position.direction_to(next_path_position) * stats.speed
-		print(new_velocity)
+		new_velocity = global_position.direction_to(next_path_position) * stats.speed * World.GRID_SIZE
 		set_velocity(new_velocity)
-		var collided_with = move_and_collide(new_velocity)
+		move_and_slide()
+		return
+	
+	reset_agro_timer()	# The target is in range and visible, time to be aggressive
 
 	
-func go_home():	# Use A* to navigate back to spawn
-	return
+func go_home():	# Navigate back to spawn
+	attacking = null
+	print("home")
+	print(home)
+	$NavigationAgent2D.set_target_position(home)
+	going_home = true
 	
 func get_random_direction() -> Vector2:
 	var direction = global_position + Vector2.UP.rotated(randi() % 360 / 2 / PI)
@@ -99,11 +114,8 @@ func check_for_targets():
 	if attacking:
 		if get_distance(attacking) > (follow_range + vision_range + 1) * World.GRID_SIZE:
 			if agro_timer <= 0:	# If the target is out of range, and the enemy got tired of the chase, go home; else continue
-				attacking = null
 				go_home()
-			return
-		if attacking in in_vision:	# Already have a target that's still visible
-			return
+		return
 	if in_vision.is_empty():	# No visible targets
 		attacking = null
 		return
@@ -111,10 +123,10 @@ func check_for_targets():
 	var distances = in_vision.map(get_distance)
 	var closest_idx = distances.find(distances.min())
 	attacking = in_vision[closest_idx]
-	reset_agro_timer()
+	going_home = false
 	
 func reset_agro_timer():
-	agro_timer = randfn(2^aggressiveness, aggressiveness)	# More aggressive enemies will stay agro'd for longer
+	agro_timer = clamp(randfn(aggressiveness**2, aggressiveness), 0, 300)	# More aggressive enemies will stay agro'd for longer
 	
 func get_distance(target):
 	var A = target.global_position

@@ -1,4 +1,5 @@
 NavigationObstacle2D
+NavigationLink2D
 NavigationRegion2D
 NavigationAgent2D
 CollisionShape2D

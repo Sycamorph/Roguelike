@@ -1,6 +1,5 @@
 res://default_env.tres
-res://src/Actors/Enemy.tscn
-res://src/Actors/Enemy.gd
+res://src/Rooms/Blocks/Floor.tscn
 res://src/Game.tscn
 res://src/Actors/Actions/ActionHandler.tscn
 res://src/UI/Menus/Pause.tscn
@@ -9,13 +8,12 @@ res://src/UI/Menus/Spellcrafting.tscn
 res://src/Actors/Projectiles/AoE.tscn
 res://src/Actors/Player.tscn
 res://src/Actors/Projectiles/Projectile.tscn
+res://src/Actors/Enemy.tscn
 res://src/world.tscn
-res://src/Rooms/Blocks/Door.tscn
-res://src/Rooms/Blocks/Floor.tscn
 res://src/Rooms/Blocks/Wall.tscn
-res://src/Rooms/FullJunction0.tscn
-res://src/Rooms/UDJunction0.tscn
 res://src/Rooms/FullJunction1.tscn
+res://src/Rooms/UDJunction0.tscn
+res://src/Rooms/FullJunction0.tscn
 res://src/Rooms/RoomTemplate.tscn
-res://src/Rooms/Blocks/Block.tscn
+res://src/Actors/Enemy.gd
 res://src/World.gd
