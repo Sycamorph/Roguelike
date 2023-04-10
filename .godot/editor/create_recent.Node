@@ -1,3 +1,10 @@
+CanvasLayer
+ColorRect
+TextureRect
+PointLight2D
+LightOccluder2D
+Sprite2D
+Node2D
 NavigationObstacle2D
 NavigationLink2D
 NavigationRegion2D
@@ -11,14 +18,11 @@ LineEdit
 VBoxContainer
 Control
 Container
-Node2D
-Sprite2D
 CharacterBody2D
 MarginContainer
 HBoxContainer
 ScrollContainer
 Panel
 Button
-ColorRect
 AnimationPlayer
 TileMap

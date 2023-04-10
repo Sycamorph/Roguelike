@@ -1,12 +1,15 @@
-[gd_scene load_steps=6 format=3 uid="uid://dlhfe270s344f"]
+[gd_scene load_steps=7 format=3 uid="uid://dlhfe270s344f"]
 
 [ext_resource type="Script" path="res://src/Rooms/Blocks/Block.gd" id="1_tmq0j"]
-[ext_resource type="Texture2D" uid="uid://csud55331a106" path="res://Sprites/World/Wall0.png" id="2_5xujw"]
+[ext_resource type="Texture2D" uid="uid://csud55331a106" path="res://Sprites/World/Wall0.png" id="2_rntc0"]
 [ext_resource type="Script" path="res://src/Actors/Stats.gd" id="3_hjwra"]
 [ext_resource type="PackedScene" path="res://src/Actors/Actions/Action.tscn" id="4_1ihol"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_x8jdy"]
 size = Vector2(32, 32)
+
+[sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_m3dp1"]
+polygon = PackedVector2Array(-16, 16, -16, -16, 16, -16, 16, 16)
 
 [node name="Wall" type="CharacterBody2D"]
 texture_filter = 1
@@ -17,8 +20,7 @@ script = ExtResource("1_tmq0j")
 battler_name = "Wall"
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
-modulate = Color(1, 1, 1, 0.521569)
-texture = ExtResource("2_5xujw")
+texture = ExtResource("2_rntc0")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="Sprite2D"]
 
@@ -32,3 +34,7 @@ speed = 10
 
 [node name="HitboxShape" type="CollisionShape2D" parent="."]
 shape = SubResource("RectangleShape2D_x8jdy")
+
+[node name="LightOccluder2D" type="LightOccluder2D" parent="."]
+occluder = SubResource("OccluderPolygon2D_m3dp1")
+occluder_light_mask = 3

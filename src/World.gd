@@ -71,7 +71,7 @@ func spawn_enemy(pool, enemy=-1, room=-1):
 
 func spawn_player():
 	var spawned_player = preload("res://src/Actors/Player.tscn").instantiate()
-	player_spawn = room_rects[randi() % room_rects.size()].get_center() - Vector2(GRID_SIZE, GRID_SIZE) / 2
+	player_spawn = room_rects[0].get_center() - Vector2(GRID_SIZE, GRID_SIZE) / 2
 	spawned_player.position = player_spawn
 	add_child(spawned_player)
 	player = spawned_player
@@ -117,15 +117,18 @@ func check_adjacent(x, y):
 	return adjacent
 			
 
-func add_room(occupied_regions):
+func add_room(occupied_regions, center=true):
 	var new_room = all_rooms[randi() % all_rooms.size()].instantiate()
 	var size = new_room.get_used_rect().size
 	var start = Vector2i(0,0) # Placing the first room
 	var attached_room
 	if !rooms.is_empty():
-		var rooms_to_test = rooms
+		var rooms_to_test = rooms.duplicate()
+		var i = 0
 		while !attached_room:
-			var test_room = rooms_to_test[randi() % rooms.size()]
+			var test_room = rooms_to_test[i]	# Trying to build all rooms in the center
+			if not center:	# Random
+				test_room = rooms_to_test[randi() % rooms.size()]
 			start = attach_position(new_room, test_room)
 			if start:
 				attached_room = test_room
@@ -134,6 +137,7 @@ func add_room(occupied_regions):
 				rooms_to_test.remove_at(rooms_to_test.find(test_room))
 			if rooms_to_test.is_empty():
 				return
+			i += 1
 	new_room.position = start
 	floor_grid.add_child(new_room)
 	rooms.append(new_room)

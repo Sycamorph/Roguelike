@@ -14,7 +14,6 @@ var experience_total = 0
 var experience_required = get_required_experience(level + 1)
 
 var target 
-var selected_action_id = 0
 var spam_prevention = 0
 
 var menu = null
@@ -34,15 +33,10 @@ func _ready():
 		actions.add_random_block()
 		
 func player_initialize():
-	actions.add_ability(self, [[CASTER, ADD_STAT, HEALTH, 1, 0]], "Heal")
-	actions.add_ability(self, [[CASTER, ADD_STAT, HEALTH, 1, 0.1],	# Heal the caster for 1, cooldown for 0.1 seconds
-				[SHOOT_BASIC, 1, 0.5, 0, 0, # Then shoot a basic projectile with asize of 100%, speed of 2 tiles/s, with horizontal and vertical acceleration of 1 and -1
-					[[AOE, 10, [[CASTER, ADD_STAT, HEALTH, -1, 0]], 0]], 0.5, # while producing AOE that hurts every 0.5 seconds in area of 1 tile
-					[[CASTER, ADD_STAT, HEALTH, -1, 0], # and then damages the target for 1 on hit
-						[CASTER, ADD_STAT, HEALTH, -1, 0]], # and then again damages the target for 1 on hit
-					0],	# 0 cooldown
-				[CASTER, ADD_STAT, HEALTH, 1, 0],	# Heal the caster again
-				[CASTER, ADD_STAT, HEALTH, 1, 0]], "Attack")
+	actions.add_ability(self, [["CASTER", "ADD_STAT", "HEALTH", 1, 1]], "Heal")
+	var hurt_ability = actions.add_ability(self, [["CASTER", "ADD_STAT", "HEALTH", -1, 1]], "Hurt")
+	hurt_ability.used_in_another = true
+	hurt_ability.used_in = actions.add_ability(self, [["SHOOT_BASIC", 1, 1, 0, -1, [], 1, hurt_ability, 1]], "Shoot")
 
 func _physics_process(delta: float) -> void:
 	var direction: = get_direction()	# Keep global parameters to a minimum
@@ -51,18 +45,34 @@ func _physics_process(delta: float) -> void:
 	move_and_slide()
 	update_location()
 	if Input.is_action_pressed("use_ability"):
-		target = get_global_mouse_position() - Vector2(World.GRID_SIZE, World.GRID_SIZE) / 2
+		target = get_global_mouse_position()
 		use_ability(target)
 	spam_prevention = max(0, spam_prevention - 1)	# Action spam prevention
 	
 func _input(event):
 	if Input.is_action_just_released("scroll_down"):
-		selected_action_id = selected_action_id - 1 if selected_action_id > 0 else available_actions.size() - 1
-		selected_action = available_actions[selected_action_id]
+		var action_list = available_actions.duplicate()
+		for i in action_list:
+			var current_id = action_list.find(i)
+			if action_list[current_id].used_in_another:
+				action_list.remove_at(current_id)
+		var selected_action_id = 0
+		if selected_action in action_list:
+			selected_action_id = action_list.find(selected_action)
+		selected_action_id = selected_action_id - 1 if selected_action_id > 0 else action_list.size() - 1
+		selected_action = action_list[selected_action_id]
 		emit_signal("switch_action", self)
 	if Input.is_action_just_released("scroll_up"):
-		selected_action_id = selected_action_id + 1 if selected_action_id < available_actions.size() - 1 else 0
-		selected_action = available_actions[selected_action_id]
+		var action_list = available_actions.duplicate()
+		for i in action_list:
+			var current_id = action_list.find(i)
+			if action_list[current_id].used_in_another:
+				action_list.remove_at(current_id)
+		var selected_action_id = 0
+		if selected_action in action_list:
+			selected_action_id = action_list.find(selected_action)
+		selected_action_id = selected_action_id + 1 if selected_action_id < action_list.size() - 1 else 0
+		selected_action = action_list[selected_action_id]
 		emit_signal("switch_action", self)
 		
 # Action

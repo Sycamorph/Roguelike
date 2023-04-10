@@ -1,7 +1,7 @@
 [gd_scene load_steps=7 format=3 uid="uid://bdx6duncgrf7m"]
 
 [ext_resource type="Script" path="res://src/Rooms/Blocks/Block.gd" id="1_q4ll7"]
-[ext_resource type="Texture2D" uid="uid://ba4wbtgmao7tn" path="res://Sprites/World/Ground0.png" id="2_yoloe"]
+[ext_resource type="Texture2D" uid="uid://ba4wbtgmao7tn" path="res://Sprites/World/Ground0.png" id="2_vj4p3"]
 [ext_resource type="Script" path="res://src/Actors/Stats.gd" id="3_5x3km"]
 [ext_resource type="PackedScene" path="res://src/Actors/Actions/Action.tscn" id="4_i756t"]
 
@@ -23,7 +23,7 @@ script = ExtResource("1_q4ll7")
 battler_name = "Floor"
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
-texture = ExtResource("2_yoloe")
+texture = ExtResource("2_vj4p3")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="Sprite2D"]
 

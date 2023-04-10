@@ -1,9 +1,10 @@
-[gd_scene load_steps=6 format=3 uid="uid://d2d0nb2c2u2l8"]
+[gd_scene load_steps=7 format=3 uid="uid://d2d0nb2c2u2l8"]
 
 [ext_resource type="Script" path="res://src/Actors/Player.gd" id="1"]
 [ext_resource type="Texture2D" uid="uid://dhath20y7gr3r" path="res://Sprites/Characters/Player0.png" id="2"]
 [ext_resource type="PackedScene" uid="uid://drhq6rmxphkc1" path="res://src/Actors/Actions/ActionHandler.tscn" id="3"]
 [ext_resource type="Script" path="res://src/Actors/Stats.gd" id="4"]
+[ext_resource type="Texture2D" uid="uid://b0tb7appo0ghl" path="res://Sprites/UI/Light.png" id="5_svagh"]
 
 [sub_resource type="CircleShape2D" id="1"]
 radius = 15.0
@@ -26,9 +27,21 @@ max_mana = 15
 speed = 10
 
 [node name="Camera2D" type="Camera2D" parent="."]
-zoom = Vector2(1.5, 1.5)
+zoom = Vector2(2, 2)
 
 [node name="HitboxShape" type="CollisionShape2D" parent="."]
 shape = SubResource("1")
 
 [node name="Actions" parent="." instance=ExtResource("3")]
+
+[node name="VisionLight" type="PointLight2D" parent="."]
+light_mask = 2
+visibility_layer = 2
+color = Color(1, 1, 1, 0)
+blend_mode = 2
+range_item_cull_mask = 2
+shadow_enabled = true
+shadow_color = Color(0, 0, 0.176471, 1)
+shadow_item_cull_mask = 2
+texture = ExtResource("5_svagh")
+texture_scale = 10.0

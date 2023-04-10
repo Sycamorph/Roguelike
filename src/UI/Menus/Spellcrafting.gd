@@ -222,7 +222,7 @@ func change_value_block(block_id, new_value):
 	else:
 		current_fragment[block_id] = new_value
 
-func builder_block_pressed(block_id, block, button):
+func builder_block_pressed(block_id, block, button):	# Either adding or removing a block
 	if button.is_in_builder_lines:
 		
 		if button.assigned_block == null:

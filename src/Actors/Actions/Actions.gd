@@ -12,11 +12,18 @@ func add_ability(target, blocks, ability_name="New Ability", cooldown=0, mana_co
 	var new_ability = ability_gen.instantiate()
 	new_ability.ability_name = ability_name
 	new_ability.active = active
-	print(blocks)
 	new_ability.blocks = blocks
+	print(blocks)
 	if blocks.size() > 0:
-		if blocks[0] is ActionBlock:	# Blocks are actual blocks
-			new_ability.used_blocks = blocks
+		if not blocks[0] is ActionBlock:	# Blocks are just a list of names
+			for block in blocks[0]:
+				if block is String:
+					new_ability.used_blocks.append(create_block(block, 0, 1))
+				else:
+					new_ability.used_blocks.append(block)
+		if new_ability.used_blocks[0] is ActionBlock:	# Successfully created actual blocks
+			print("used blocks:")
+			print(new_ability.used_blocks)
 			new_ability.update()
 	# Overwrite things
 	new_ability.cooldown = cooldown

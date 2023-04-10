@@ -1,14 +1,13 @@
-[gd_scene load_steps=9 format=3 uid="uid://xmr073aj8bu6"]
+[gd_scene load_steps=8 format=3 uid="uid://xmr073aj8bu6"]
 
-[ext_resource type="Script" path="res://src/Actors/Enemy.gd" id="1_p5i2q"]
-[ext_resource type="Texture2D" uid="uid://cer6brcwyl15q" path="res://Sprites/Characters/Enemy0.png" id="2"]
+[ext_resource type="Script" path="res://src/Actors/Enemy.gd" id="1_41o1c"]
+[ext_resource type="Texture2D" uid="uid://cer6brcwyl15q" path="res://Sprites/Characters/Enemy0.png" id="2_ht0n1"]
 [ext_resource type="Script" path="res://src/Actors/Stats.gd" id="4"]
 [ext_resource type="PackedScene" uid="uid://bsojqev8qu0af" path="res://src/Actors/WallTester.tscn" id="5_7koa0"]
 [ext_resource type="PackedScene" uid="uid://drhq6rmxphkc1" path="res://src/Actors/Actions/ActionHandler.tscn" id="5_ij04w"]
-[ext_resource type="Texture2D" uid="uid://bh05p51y4x2c4" path="res://Sprites/UI/Arrow.png" id="6_ubfk4"]
 
 [sub_resource type="CircleShape2D" id="1"]
-radius = 65.0
+radius = 40.0
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_f50qw"]
 radius = 16.0
@@ -18,11 +17,10 @@ texture_filter = 1
 disable_mode = 1
 collision_layer = 2
 collision_mask = 11
-script = ExtResource("1_p5i2q")
-aggressiveness = 1
+script = ExtResource("1_41o1c")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
-texture = ExtResource("2")
+texture = ExtResource("2_ht0n1")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="Sprite2D"]
 
@@ -44,12 +42,9 @@ collision_mask = 3
 shape = SubResource("CircleShape2D_f50qw")
 
 [node name="WallTester" parent="." instance=ExtResource("5_7koa0")]
+position = Vector2(0, 0)
 
 [node name="Actions" parent="." instance=ExtResource("5_ij04w")]
-
-[node name="Arrow" type="Sprite2D" parent="."]
-rotation = 3.14159
-texture = ExtResource("6_ubfk4")
 
 [node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]
 radius = 16.0
@@ -58,3 +53,5 @@ debug_enabled = true
 
 [connection signal="body_entered" from="Vision" to="." method="_on_vision_body_entered"]
 [connection signal="body_exited" from="Vision" to="." method="_on_vision_body_exited"]
+
+[editable path="WallTester"]

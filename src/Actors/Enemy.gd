@@ -18,14 +18,38 @@ var in_range = []	# Enemies in range, maybe not visible yet
 var attacking = null
 var walk_timer = 0.0
 var agro_timer = 0.0
+var strafe_timer = 0.0
+var shoot_timer = 0.0
+var strafe_direction = 1
+var strafe_angle = 0
 
 var going_home = false
 var home : Vector2
+
+var attributes = []
+enum {CAN_SHOOT}
 
 func _ready():
 	type = "Enemy"
 	$Vision/VisionShape.scale = Vector2(vision_range*2+1, vision_range*2+1)
 	$NavigationAgent2D.max_speed = stats.speed * World.GRID_SIZE
+	add_shoot_ability(1, 0.5, 0, -1, [], 1, add_hurt_ability(1), 1)
+	if randi() % 2 == 0:	# Will strafe in a random direction at first
+		strafe_direction = -1
+	
+func add_hurt_ability(damage):
+	return actions.add_ability(self, [["CASTER", "ADD_STAT", "HEALTH", - damage, 1]])
+	
+func add_shoot_ability(size, speed, acceleration, fall_off, flying_action, flying_delay, hit_action, hit_delay):
+	var shoot_ability = actions.add_ability(self, [["SHOOT_BASIC", size, speed, acceleration, fall_off, flying_action, flying_delay, hit_action, hit_delay]])
+	if flying_action is Action:
+		flying_action.used_in_another = true
+		flying_action.used_in = shoot_ability
+	if  hit_action is Action:
+		hit_action.used_in_another = true
+		hit_action.used_in = shoot_ability
+	attributes.append(CAN_SHOOT)
+	return shoot_ability
 
 func update_stats():
 	emit_signal("health_changed", stats.health, stats.max_health)
@@ -59,9 +83,9 @@ func _physics_process(delta):
 		else:	# Random walk cycle
 			walk_timer -= delta
 			var new_velocity : Vector2 = transform.x * stats.speed	# Set the velocity using the chosen direction
-			new_velocity = new_velocity.normalized() * stats.speed / 5 * World.GRID_SIZE * delta	# Set the velocity to speed/5
+			new_velocity = new_velocity.normalized() * stats.speed / 5 * World.GRID_SIZE	# Set the velocity to speed/5
 			set_velocity(new_velocity)
-			var collided_with = move_and_collide(new_velocity)
+			var collided_with = move_and_collide(new_velocity * delta)
 			if collided_with:	# Turn around if you walked into something
 				var collider = collided_with.get_collider()
 				look_at(global_position + collider.global_position * -1)
@@ -75,14 +99,15 @@ func engage_enemy(delta):
 	var new_velocity = transform.x
 	var distance = get_distance(attacking)
 	var can_aim = test_aim()
-	if distance < keep_distance * World.GRID_SIZE and can_aim:
+	if distance < keep_distance * World.GRID_SIZE and can_aim and not CAN_SHOOT in attributes:
 		# Back off slowly
-		new_velocity = new_velocity.normalized() * stats.speed * -1 * World.GRID_SIZE / 10
+		new_velocity = new_velocity.normalized() * stats.speed * -1 * World.GRID_SIZE / 2
 		set_velocity(new_velocity)
 		move_and_slide()
-	elif distance > (keep_distance + 1) * World.GRID_SIZE or not can_aim:	# The target is too far or not visible
+		strafe_timer = 0
+	elif distance > (keep_distance + 2 + cowardice) * World.GRID_SIZE or not can_aim or not CAN_SHOOT in attributes:	# The target is too far or not visible
 		agro_timer -= delta
-		if distance > (keep_distance + 1) * aggressiveness * World.GRID_SIZE:	# Absolute limit
+		if distance > (keep_distance + 2) * min((aggressiveness - cowardice), 1) * World.GRID_SIZE:	# Absolute limit
 			agro_timer = 0
 		# Approach quickly
 		$NavigationAgent2D.set_target_position(attacking.global_position)
@@ -94,11 +119,34 @@ func engage_enemy(delta):
 		new_velocity = global_position.direction_to(next_path_position) * stats.speed * World.GRID_SIZE
 		set_velocity(new_velocity)
 		move_and_slide()
+		strafe_timer = 0	# To prevent being stuck in going back and forth
 		return
-	
+	else:	# strafe
+		if randi() % 100 <= aggressiveness or strafe_timer > 0:
+			print(strafe_timer)
+			strafe(delta)
+	if CAN_SHOOT in attributes:
+		if shoot_timer <= 0:
+			shoot_ability(attacking)
+		shoot_timer -= delta
+		
 	reset_agro_timer()	# The target is in range and visible, time to be aggressive
 
-	
+func shoot_ability(target):
+	return
+
+func strafe(delta):
+	if strafe_timer <= 0:
+		strafe_timer = clamp(randfn(1, 1), 0, 2)
+		strafe_direction *= -1	# Change direction
+		strafe_angle = strafe_direction * deg_to_rad(randfn(90, 30))
+	var new_velocity = global_position.direction_to(attacking.global_position).rotated(strafe_angle) * stats.speed * World.GRID_SIZE
+	set_velocity(new_velocity)
+	var collided_with = move_and_collide(new_velocity * delta)
+	if collided_with:	# Turn around if you walked into something
+		strafe_timer = 0
+	strafe_timer -= delta
+
 func go_home():	# Navigate back to spawn
 	attacking = null
 	print("home")
@@ -107,7 +155,7 @@ func go_home():	# Navigate back to spawn
 	going_home = true
 	
 func get_random_direction() -> Vector2:
-	var direction = global_position + Vector2.UP.rotated(randi() % 360 / 2 / PI)
+	var direction = global_position + Vector2.UP.rotated(deg_to_rad(randi() % 360))
 	return direction
 
 func check_for_targets():
@@ -126,7 +174,7 @@ func check_for_targets():
 	going_home = false
 	
 func reset_agro_timer():
-	agro_timer = clamp(randfn(aggressiveness**2, aggressiveness), 0, 300)	# More aggressive enemies will stay agro'd for longer
+	agro_timer = clamp(randfn(aggressiveness**1.2, aggressiveness), 0, 300)	# More aggressive enemies will stay agro'd for longer
 	
 func get_distance(target):
 	var A = target.global_position
@@ -187,7 +235,10 @@ func test_aim():
 	var distance = A - B
 	var collision = wall_tester.move_and_collide(distance, true)
 	if collision:
-		return false
+		if collision.get_collider() == attacking:
+			return true
+		else:
+			return false
 	return true
 
 func _on_vision_body_exited(body):

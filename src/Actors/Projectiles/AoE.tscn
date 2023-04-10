@@ -33,5 +33,6 @@ max_mana = 10
 [node name="Timer" type="Timer" parent="."]
 
 [node name="WallTester" parent="." instance=ExtResource("6_y36rj")]
+position = Vector2(0, 0)
 
 [node name="Actions" parent="." instance=ExtResource("5_ibrxr")]
