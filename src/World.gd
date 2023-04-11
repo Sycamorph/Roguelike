@@ -41,7 +41,7 @@ const GRID_SIZE = 32
 enum {FLOOR, WALL, DOOR_C}
 const VOID = -1
 
-var enemytypes = [preload("res://src/Actors/Enemy.tscn")]
+var enemytypes = [preload("res://src/Actors/Turret.tscn")]
 var num_enemies = 1
 
 func _ready():

@@ -24,7 +24,7 @@ texture = ExtResource("2")
 script = ExtResource("4")
 max_health = 15
 max_mana = 15
-speed = 10
+speed = 10.0
 
 [node name="Camera2D" type="Camera2D" parent="."]
 zoom = Vector2(2, 2)

@@ -81,6 +81,7 @@ var used_blocks = []
 	
 func update():
 	mana_consumed = 0
+	cooldown = used_blocks[-1]
 	depth = []	# For the spellcrafting screen
 	current_depth = 0
 	print("Updating")
@@ -151,11 +152,8 @@ func compile_blocks(blocks_to_use=used_blocks):	# A used block is a scene
 		if block.contents == "CHAIN":
 			block_to_compile.append(CHAIN)
 			_blocks.remove_at(0)	# Remove the chain signifier and add each ability
-			print(_blocks)
 			var block_size = block.order.size() - 2	# - 1 for CHAIN, -1 for the placeholder at the end
-			print(block_size)
 			_blocks = _blocks.slice(0, block_size)
-			print(_blocks)
 			for i in range(block_size):
 				add_first_block_as_action(block_to_compile, _blocks)
 		elif block.contents == "REPEAT":	# Adding the whole ability to blocks
@@ -191,7 +189,6 @@ func compile_blocks(blocks_to_use=used_blocks):	# A used block is a scene
 		breaking_depth = current_depth
 		current_depth -= 1	# Return to the previous depth every time this ends
 		return [[], _blocks]
-	print(_blocks)
 	if not _blocks.is_empty():
 		var data = compile_blocks(_blocks)
 		var extra_blocks = data[0]
@@ -231,8 +228,6 @@ func act(actor, target = null, spell_range=64, extra_exceptions=[]):
 	on_cooldown = true
 	var action_succeeded = true
 	var blocks_left = blocks.duplicate(true)
-	print("blocks left")
-	print(blocks_left)
 	while !blocks_left.is_empty():	# Not needed for abilities created through spellcrafting
 		var block = blocks_left[0]
 		if block[0] == CASTER:
@@ -274,7 +269,6 @@ func self_act(actor, block):
 		return act_add_stat(actor, block[2], block[3])
 	
 func shoot_act(actor, target, blocks, extra_exceptions=[]):
-	print("shoot")
 	emit_signal("create_projectile", actor, target, blocks, block_dict[blocks[0]], extra_exceptions)
 	return
 

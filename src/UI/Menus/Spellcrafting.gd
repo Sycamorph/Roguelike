@@ -88,7 +88,7 @@ func initialize_action_builder(block, button):
 		current_fragment = []
 		for i in range(block.order.size()):
 			if block.order[i] in ActionBlock.VALUE_TYPES:
-				current_fragment.append(block.defaults[block.order[i]])
+				current_fragment.append(block.defaults[i])
 			else:
 				current_fragment.append(0)
 		current_fragment[0] = current_block
@@ -150,6 +150,8 @@ func build_action_lines(clear=true):
 	new_label.text = current_block.descriptions["BLOCK"]	# Base description
 	for i in range(1, min(stage, current_fragment.size()-1)+1):
 		var element = current_block.order[i]
+		var type = current_block.type_map[i]
+		var default = current_block.defaults[i]
 		new_label = Label.new()
 		builder_lines.add_child(new_label)
 		var desc = current_block.descriptions[element]
@@ -167,22 +169,22 @@ func build_action_lines(clear=true):
 			if element in ActionBlock.HIDDEN_VALUES and not element in current_block.editable_values:
 				new_label.queue_free()
 				continue
-			new_label.text += "%d" % current_block.defaults[element]
-			current_fragment[i] = current_block.defaults[element]
+			new_label.text += "%d" % default
+			current_fragment[i] = default
 		elif element in current_block.editable_values:
 			var new_spinbox = preload("res://src/UI/ValueBox.tscn").instantiate()
 			builder_lines.add_child(new_spinbox)
 			new_spinbox.block_id = i
-			if element in ActionBlock.PERCENTAGE_VALUES:
+			if type == ActionBlock.type_legend.PERCENTAGE:
 				new_spinbox.min_value = max(0, 100 -player.level)
 				new_spinbox.max_value = 100 + player.level
-			elif element in ActionBlock.POSITIVE_VALUES:
+			elif type == ActionBlock.type_legend.POSITIVE:
 				new_spinbox.min_value = 0
 				new_spinbox.max_value = player.level * 2
 			else:
 				new_spinbox.min_value = -player.level
 				new_spinbox.max_value = player.level
-			if element in ActionBlock.PERCENTAGE_VALUES:
+			if type == ActionBlock.type_legend.PERCENTAGE:
 				new_spinbox.value = current_fragment[i] * 100
 			else:
 				new_spinbox.value = current_fragment[i]
@@ -217,7 +219,7 @@ func change_ability_name(new_name):
 func change_value_block(block_id, new_value):
 	if current_fragment.size() < block_id:
 		return	# Prevent the crash when quitting
-	if current_block.order[block_id] in ActionBlock.PERCENTAGE_VALUES:
+	if current_block.type_map[block_id] == ActionBlock.type_legend.PERCENTAGE:
 		current_fragment[block_id] = new_value / 100
 	else:
 		current_fragment[block_id] = new_value

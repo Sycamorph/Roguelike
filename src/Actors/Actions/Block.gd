@@ -4,12 +4,15 @@ class_name ActionBlock
 
 const VALUE_TYPES = ["VALUE", "DELAY", "SIZE", "SPEED", "ACCELERATION", "FALLOFF", "REPEAT"]
 const HIDDEN_VALUES = ["SIZE", "SPEED", "ACCELERATION", "FALLOFF"]	# No need to think about them, unless special
-const POSITIVE_VALUES = ["REPEAT"]
-const PERCENTAGE_VALUES = ["SIZE", "SPEED"]
+#const POSITIVE_VALUES = ["REPEAT"]
+#const PERCENTAGE_VALUES = ["SIZE", "SPEED"]
 const OPTIONAL = ["ABILITY"]
 var editable_values = ["VALUE", "REPEAT"]
 
-var defaults = {"VALUE":1, "DELAY":1, "SIZE":1, "SPEED":1, "ACCELERATION":0, "FALLOFF":-1, "REPEAT":1, "CHAIN":1}
+#var defaults = {"VALUE":1, "DELAY":1, "SIZE":1, "SPEED":1, "ACCELERATION":0, "FALLOFF":-1, "REPEAT":1, "CHAIN":1}
+enum type_legend {BLOCK, INTEGER, POSITIVE, FLOAT, FLOAT_POSITIVE, PERCENTAGE}
+var defaults = []
+var type_map = []
 var descriptions = {"VALUE":"By ", "DELAY":"With a cooldown of "}
 
 var type = "BLOCK"
@@ -36,6 +39,8 @@ func initialize_properties(_contents):
 		return
 	elif contents == "CASTER":
 		order = ["BLOCK", "COMMAND", "SPECIFICATION", "VALUE", "DELAY"]
+		type_map = [type_legend.BLOCK, type_legend.BLOCK, type_legend.BLOCK, type_legend.INTEGER, type_legend.FLOAT_POSITIVE]
+		defaults = ["BLOCK", "COMMAND", "SPECIFICATION", 1, 15]
 		descriptions["BLOCK"] = "This action will be applied to whoever touched this spell last. "
 		descriptions["COMMAND"] = "Action to be applied: "
 		descriptions["SPECIFICATION"] = "Which stat to edit: "	# Might be other possibilities
@@ -45,6 +50,8 @@ func initialize_properties(_contents):
 		possible_effects = [["LASTING", null], [null, "CHAOTIC"]]
 	elif contents == "SHOOT_BASIC":
 		order = ["BLOCK", "SIZE", "SPEED", "ACCELERATION", "FALLOFF", "ABILITY", "DELAY", "ABILITY", "DELAY"]
+		type_map = [type_legend.BLOCK, type_legend.PERCENTAGE, type_legend.PERCENTAGE, type_legend.FLOAT, type_legend.FLOAT, type_legend.BLOCK, type_legend.FLOAT_POSITIVE, type_legend.BLOCK, type_legend.FLOAT_POSITIVE]
+		defaults = ["BLOCK", 1, 1, 0, -1, "ABILITY", 0.1, "ABILITY", 1]
 		descriptions["BLOCK"] = "Fire a projectile, causing whoever was hit to cast a spell."
 		descriptions["SIZE"] = "Projectile size: "
 		descriptions["SPEED"] = "Projectile speed: "
@@ -58,6 +65,8 @@ func initialize_properties(_contents):
 	elif contents == "AOE":
 		# AOE of value1 size with ability effect, value2 delay
 		order = ["BLOCK", "SIZE", "ABILITY", "DELAY"]
+		type_map = [type_legend.BLOCK, type_legend.PERCENTAGE, type_legend.BLOCK, type_legend.FLOAT_POSITIVE]
+		defaults = ["BLOCK", 1, "ABILITY", 1]
 		descriptions["BLOCK"] = "Cause everyone in range to cast a spell"
 		descriptions["SIZE"] = "Range: "
 		descriptions["ABILITY"] = ["The targets will cast: "]
@@ -67,6 +76,8 @@ func initialize_properties(_contents):
 	elif contents == "REPEAT":
 		#Repeat the ability value1 times
 		order = ["BLOCK", "ABILITY", "REPEAT"]
+		type_map = [type_legend.BLOCK, type_legend.BLOCK, type_legend.POSITIVE]
+		defaults = ["BLOCK", "ABILITY", 1]
 		descriptions["BLOCK"] = "Repeat the same ability."
 		descriptions["ABILITY"] = "Ability to repeat: "
 		descriptions["REPEAT"] = "Amount of times: "
@@ -75,6 +86,8 @@ func initialize_properties(_contents):
 	elif contents == "CHAIN":
 		#Chain a value amount of abilities
 		order = ["BLOCK", "ABILITY"]
+		type_map = [type_legend.BLOCK, type_legend.BLOCK]
+		defaults = ["BLOCK", "ABILITY"]
 		descriptions["BLOCK"] = "Chain multiple abilities together."
 		descriptions["ABILITY"] = "Add an ability to the chain: "
 		type = "BLOCK"

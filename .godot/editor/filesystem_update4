@@ -1,7 +1,9 @@
 res://default_env.tres
+res://src/Actors/Turret.tscn
+res://src/Actors/Actions/Block.gd
+res://src/Actors/Turret.gd
 res://src/Game.tscn
-res://src/Actors/Actions/Actions.gd
-res://src/Actors/Player.gd
+res://src/UI/Menus/Spellcrafting.gd
 res://src/Actors/Actions/ActionHandler.tscn
 res://src/UI/Menus/Pause.tscn
 res://src/Debug.tscn
@@ -13,7 +15,5 @@ res://src/Actors/Enemy.tscn
 res://src/Rooms/Blocks/Floor.tscn
 res://src/world.tscn
 res://src/Rooms/Blocks/Wall.tscn
-res://src/UI/Interface.tscn
-res://src/Actors/Actions/Block.tscn
-res://src/World.gd
-res://src/Actors/Enemy.gd
+res://src/Actors/Actions/Actions.gd
+res://src/Actors/Projectiles/Projectile.gd

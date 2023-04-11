@@ -27,16 +27,20 @@ var going_home = false
 var home : Vector2
 
 var attributes = []
+var shoot_abilities = []
 enum {CAN_SHOOT}
 
 func _ready():
 	type = "Enemy"
 	$Vision/VisionShape.scale = Vector2(vision_range*2+1, vision_range*2+1)
 	$NavigationAgent2D.max_speed = stats.speed * World.GRID_SIZE
-	add_shoot_ability(1, 0.5, 0, -1, [], 1, add_hurt_ability(1), 1)
+	add_starting_abilities()
 	if randi() % 2 == 0:	# Will strafe in a random direction at first
 		strafe_direction = -1
 	
+func add_starting_abilities():	# Change for specific enemies
+	return
+
 func add_hurt_ability(damage):
 	return actions.add_ability(self, [["CASTER", "ADD_STAT", "HEALTH", - damage, 1]])
 	
@@ -49,6 +53,7 @@ func add_shoot_ability(size, speed, acceleration, fall_off, flying_action, flyin
 		hit_action.used_in_another = true
 		hit_action.used_in = shoot_ability
 	attributes.append(CAN_SHOOT)
+	shoot_abilities.append(shoot_ability)
 	return shoot_ability
 
 func update_stats():
@@ -99,41 +104,45 @@ func engage_enemy(delta):
 	var new_velocity = transform.x
 	var distance = get_distance(attacking)
 	var can_aim = test_aim()
-	if distance < keep_distance * World.GRID_SIZE and can_aim and not CAN_SHOOT in attributes:
-		# Back off slowly
-		new_velocity = new_velocity.normalized() * stats.speed * -1 * World.GRID_SIZE / 2
-		set_velocity(new_velocity)
-		move_and_slide()
-		strafe_timer = 0
-	elif distance > (keep_distance + 2 + cowardice) * World.GRID_SIZE or not can_aim or not CAN_SHOOT in attributes:	# The target is too far or not visible
-		agro_timer -= delta
-		if distance > (keep_distance + 2) * min((aggressiveness - cowardice), 1) * World.GRID_SIZE:	# Absolute limit
-			agro_timer = 0
-		# Approach quickly
-		$NavigationAgent2D.set_target_position(attacking.global_position)
-		if not $NavigationAgent2D.is_target_reachable():
-			print("not reachable")
-			go_home()
+	if stats.speed > 0:
+		if distance < keep_distance * World.GRID_SIZE and can_aim and not CAN_SHOOT in attributes:
+			# Back off slowly
+			new_velocity = new_velocity.normalized() * stats.speed * -1 * World.GRID_SIZE / 2
+			set_velocity(new_velocity)
+			move_and_slide()
+			strafe_timer = 0
+		elif distance > (keep_distance + 2 + cowardice) * World.GRID_SIZE or not can_aim or not CAN_SHOOT in attributes:	# The target is too far or not visible
+			follow(delta, distance)
+			strafe_timer = 0	# To prevent being stuck in going back and forth
 			return
-		var next_path_position = $NavigationAgent2D.get_next_path_position()
-		new_velocity = global_position.direction_to(next_path_position) * stats.speed * World.GRID_SIZE
-		set_velocity(new_velocity)
-		move_and_slide()
-		strafe_timer = 0	# To prevent being stuck in going back and forth
-		return
-	else:	# strafe
-		if randi() % 100 <= aggressiveness or strafe_timer > 0:
-			print(strafe_timer)
-			strafe(delta)
+		else:	# strafe
+			if randi() % 100 <= aggressiveness or strafe_timer > 0:
+				print(strafe_timer)
+				strafe(delta)
 	if CAN_SHOOT in attributes:
-		if shoot_timer <= 0:
-			shoot_ability(attacking)
+		if shoot_timer <= 0 and can_aim:
+			shoot_ability(delta, attacking)
 		shoot_timer -= delta
 		
 	reset_agro_timer()	# The target is in range and visible, time to be aggressive
 
-func shoot_ability(target):
+func shoot_ability(delta, target):
 	return
+	
+func follow(delta, distance):
+	agro_timer -= delta
+	if distance > (keep_distance + 2) * min((aggressiveness - cowardice), 1) * World.GRID_SIZE:	# Absolute limit
+		agro_timer = 0
+	# Approach quickly
+	$NavigationAgent2D.set_target_position(attacking.global_position)
+	if not $NavigationAgent2D.is_target_reachable():
+		print("not reachable")
+		go_home()
+		return
+	var next_path_position = $NavigationAgent2D.get_next_path_position()
+	var new_velocity = global_position.direction_to(next_path_position) * stats.speed * World.GRID_SIZE
+	set_velocity(new_velocity)
+	move_and_slide()
 
 func strafe(delta):
 	if strafe_timer <= 0:

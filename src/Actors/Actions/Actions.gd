@@ -8,7 +8,7 @@ var ability_gen = preload("res://src/Actors/Actions/Action.tscn")
 var block_gen = preload("res://src/Actors/Actions/Block.tscn")
 @onready var blocks = $BlockContainer
 
-func add_ability(target, blocks, ability_name="New Ability", cooldown=0, mana_consumed=0, active=true):
+func add_ability(target, blocks, ability_name="New Ability", active=true):
 	var new_ability = ability_gen.instantiate()
 	new_ability.ability_name = ability_name
 	new_ability.active = active
@@ -21,13 +21,13 @@ func add_ability(target, blocks, ability_name="New Ability", cooldown=0, mana_co
 					new_ability.used_blocks.append(create_block(block, 0, 1))
 				else:
 					new_ability.used_blocks.append(block)
+		else:
+			new_ability.used_blocks = blocks
 		if new_ability.used_blocks[0] is ActionBlock:	# Successfully created actual blocks
 			print("used blocks:")
 			print(new_ability.used_blocks)
 			new_ability.update()
 	# Overwrite things
-	new_ability.cooldown = cooldown
-	new_ability.mana_consumed = mana_consumed
 	target.actions.add_child(new_ability)
 	target.available_actions.append(new_ability)
 	if active:

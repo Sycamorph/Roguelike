@@ -33,7 +33,7 @@ func _physics_process(delta: float) -> void:
 	height += acceleration.y * delta
 	if height <= 0:
 		set_collision_mask_value(7, true)	# Now the projectile can hit the floor
-	var collided_with = move_and_collide(velocity)
+	var collided_with = move_and_collide(velocity * delta)
 	if collided_with:
 		print("hit")
 		print(collided_with.get_collider())

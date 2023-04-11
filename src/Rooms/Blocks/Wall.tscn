@@ -13,7 +13,7 @@ polygon = PackedVector2Array(-16, 16, -16, -16, 16, -16, 16, 16)
 
 [node name="Wall" type="CharacterBody2D"]
 texture_filter = 1
-collision_layer = 8
+collision_layer = 0
 collision_mask = 31
 motion_mode = 1
 script = ExtResource("1_tmq0j")

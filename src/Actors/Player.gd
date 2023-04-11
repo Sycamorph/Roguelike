@@ -50,7 +50,7 @@ func _physics_process(delta: float) -> void:
 	spam_prevention = max(0, spam_prevention - 1)	# Action spam prevention
 	
 func _input(event):
-	if Input.is_action_just_released("scroll_down"):
+	if Input.is_action_just_released("scroll_down"):	# TODO: Remove all this, add equip button to actions
 		var action_list = available_actions.duplicate()
 		for i in action_list:
 			var current_id = action_list.find(i)
